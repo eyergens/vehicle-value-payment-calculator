@@ -4,7 +4,7 @@ The app allows users to search a vehicle by make, model, and year, view an estim
 
 ## Live Demo
 Deployed on Netlify:
-* https://search-bar-challange.netlify.app/
+* https://vehicle-value-payment-calculator.netlify.app/
 
 ## Tech Stack
 * React
@@ -20,8 +20,8 @@ Deployed on Netlify:
 
 ### Installation
 ```
-git clone https://github.com/eyergens/react-search-bar-challange.git
-cd react-search-bar-challange
+git clone https://github.com/eyergens/vehicle-value-payment-calculator.git
+cd vehicle-value-payment-calculator
 npm install
 ```
 
