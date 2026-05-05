@@ -1,9 +1,9 @@
 import {Box, IconButton, Paper, Typography} from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete';
-import type {OptionProps} from "../lib/types.ts";
+import type {QuoteOption} from "../types/QuoteOption.ts";
 
 export default function Option({option, removeQuoteOption, selectedId, setSelected}: {
-  option: OptionProps,
+  option: QuoteOption,
   removeQuoteOption: (id: number) => void,
   selectedId: number,
   setSelected: (id: number) => void,

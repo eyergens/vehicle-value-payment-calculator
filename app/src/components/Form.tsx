@@ -11,9 +11,9 @@ import {
 } from '@mui/material'
 import React, {useState} from 'react'
 import AddIcon from "@mui/icons-material/Add"
-import type {QuoteFormProps} from "../lib/types.ts";
+import type {QuoteForm} from "../types/QuoteForm.ts";
 
-export default function Form({addQuoteOption}: QuoteFormProps) {
+export default function Form({addQuoteOption}: QuoteForm) {
   const [newQuote, setNewQuotes] = useState({
     downPayment: null,
     term: null,

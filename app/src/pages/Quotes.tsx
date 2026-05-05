@@ -1,10 +1,11 @@
 import Option from '../components/Option'
 import Form from '../components/Form'
 import {Box, Typography} from '@mui/material'
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import axios from "axios";
 import {useQuery} from "@tanstack/react-query";
-import type {QuoteFormProps, PaymentsSearchResult} from "../lib/types.ts";
+import type {PaymentsSearchResult} from "../types/PaymentsSearchResult.ts";
+import type {QuoteForm} from "../types/QuoteForm.ts";
 
 const fetchMonthlyPaymentsResults = async (price: number, downPayment: number, loanTerm: number, interestRate: number): Promise<PaymentsSearchResult> => {
   return axios.get<PaymentsSearchResult>("/api/payments", {
@@ -41,7 +42,7 @@ export default function Quotes({price}: {
   ]);
   const [selectedQuote, setSelectedQuote] = useState(quoteOptions[0]);
 
-  const addQuoteOption: QuoteFormProps['addQuoteOption'] = (values) => {
+  const addQuoteOption: QuoteForm['addQuoteOption'] = (values) => {
     const newOption = {
       id: (quoteOptions.at(-1)?.id ?? 1) + 1,
       downPayment: values.downPayment,
@@ -49,13 +50,17 @@ export default function Quotes({price}: {
       interestRate: values.interestRate,
     };
     setQuoteOptions([...quoteOptions, newOption]);
+    setSelectedQuote(newOption);
   };
+
+  useEffect(() => {
+    if (!quoteOptions.some(option => option.id == selectedQuote.id)) {
+      setSelectedQuote(quoteOptions[0])
+    }
+  }, [quoteOptions]);
 
   const removeQuoteOption = (id: number) => {
     setQuoteOptions(quoteOptions.filter(option => option.id !== id));
-    if (selectedQuote.id === id) {
-      setSelectedQuote(quoteOptions[0])
-    }
   };
 
   const setSelectedQuoteOption = (id: number) => {

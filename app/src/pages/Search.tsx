@@ -11,7 +11,10 @@ import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import type {MakeProps, ModelProps, ModelSearchResult, ValueSearchResult} from "../lib/types.ts";
+import type {ModelSearchResult} from "../types/ModelSearchResult.ts";
+import type {Make} from "../types/Make.ts";
+import type {Model} from "../types/Model.ts";
+import type {ValueSearchResult} from "../types/ValueSearchResult.ts";
 
 const fetchModelSearchResults = async (query: string): Promise<ModelSearchResult> => {
   return axios.get<ModelSearchResult>(`https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformake/${query}?format=json`
@@ -36,8 +39,8 @@ export default function Search({price, savePrice}: {
   price: number;
   savePrice: (price: number) => void,
 }) {
-  const [carMakes, setCarMakes] = useState<MakeProps[]>([]);
-  const [make, setMake] = useState<MakeProps | null>(null);
+  const [carMakes, setCarMakes] = useState<Make[]>([]);
+  const [make, setMake] = useState<Make | null>(null);
   const [model, setModel] = useState('');
   const [year, setYear] = useState(dayjs());
   const [filters, setFilters] = useState({make: '', model: '', year: dayjs().year()});
@@ -47,7 +50,7 @@ export default function Search({price, savePrice}: {
       header: true,
       skipEmptyLines: true,
       complete: (results) => {
-        setCarMakes(results.data as MakeProps[]);
+        setCarMakes(results.data as Make[]);
       },
     });
   }, []);
@@ -97,7 +100,7 @@ export default function Search({price, savePrice}: {
             )}
           />
           <Autocomplete
-            options={modelsQuery.data?.Results.map((model: ModelProps) => (model.Model_Name)) || []}
+            options={modelsQuery.data?.Results.map((model: Model) => (model.Model_Name)) || []}
             getOptionLabel={option => option}
             noOptionsText={
               modelsQuery.isError
