@@ -1,11 +1,12 @@
 import Option from '../components/Option'
 import Form from '../components/Form'
 import {Box, Typography} from '@mui/material'
-import {useEffect, useState} from 'react'
+import {useEffect} from 'react'
 import axios from "axios";
 import {useQuery} from "@tanstack/react-query";
 import type {PaymentsSearchResult} from "../types/PaymentsSearchResult.ts";
 import type {QuoteForm} from "../types/QuoteForm.ts";
+import type {QuoteOption} from "../types/QuoteOption.ts";
 
 const fetchMonthlyPaymentsResults = async (price: number, downPayment: number, loanTerm: number, interestRate: number): Promise<PaymentsSearchResult> => {
   return axios.get<PaymentsSearchResult>("/api/payments", {
@@ -17,30 +18,13 @@ const fetchMonthlyPaymentsResults = async (price: number, downPayment: number, l
   });
 };
 
-export default function Quotes({price}: {
+export default function Quotes({price, quoteOptions, setQuoteOptions, selectedQuote, setSelectedQuote}: {
   price: number;
+  quoteOptions: QuoteOption[];
+  setQuoteOptions: (quoteOptions: QuoteOption[]) => void;
+  selectedQuote: QuoteOption;
+  setSelectedQuote: (quoteOption: QuoteOption) => void;
 }) {
-  const [quoteOptions, setQuoteOptions] = useState([
-    {
-      id: 1,
-      downPayment: 3000,
-      term: 60,
-      interestRate: 5.8,
-    },
-    {
-      id: 2,
-      downPayment: 10000,
-      term: 60,
-      interestRate: 5.4,
-    },
-    {
-      id: 3,
-      downPayment: 8000,
-      term: 40,
-      interestRate: 5.5,
-    },
-  ]);
-  const [selectedQuote, setSelectedQuote] = useState(quoteOptions[0]);
 
   const addQuoteOption: QuoteForm['addQuoteOption'] = (values) => {
     const newOption = {

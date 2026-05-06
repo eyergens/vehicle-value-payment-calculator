@@ -17,6 +17,27 @@ const queryClient = new QueryClient()
 function App() {
   const [mode, setMode] = useState<PaletteMode>("light");
   const [price, setPrice] = useState(0);
+  const [quoteOptions, setQuoteOptions] = useState([
+    {
+      id: 1,
+      downPayment: 3000,
+      term: 60,
+      interestRate: 5.8,
+    },
+    {
+      id: 2,
+      downPayment: 10000,
+      term: 60,
+      interestRate: 5.4,
+    },
+    {
+      id: 3,
+      downPayment: 8000,
+      term: 40,
+      interestRate: 5.5,
+    },
+  ]);
+  const [selectedQuote, setSelectedQuote] = useState(quoteOptions[0]);
 
   const theme = useMemo(
     () =>
@@ -69,7 +90,9 @@ function App() {
           {/* Routes */}
           <Routes>
             <Route path="/" element={<Search price={price} savePrice={savePrice}/>}/>
-            <Route path="/quotes" element={<Quotes price={price}/>}/>
+            <Route path="/quotes"
+                   element={<Quotes price={price} quoteOptions={quoteOptions} setQuoteOptions={setQuoteOptions}
+                                    selectedQuote={selectedQuote} setSelectedQuote={setSelectedQuote}/>}/>
             <Route path="*" element={<PageNotFound/>}/>
           </Routes>
         </BrowserRouter>
