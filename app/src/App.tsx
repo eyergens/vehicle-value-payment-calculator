@@ -13,12 +13,30 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import {loginRequest} from './authConfig';
 import {AuthenticatedTemplate, UnauthenticatedTemplate, useMsal, useIsAuthenticated} from '@azure/msal-react';
+import type {QuoteOption} from "./types/QuoteOption.ts";
 
 const queryClient = new QueryClient()
 
-const MainContent = ({mode, setMode, price, savePrice, isAuthenticated, signOut}: {
-  mode: PaletteMode, setMode: Dispatch<SetStateAction<PaletteMode>>,
-  price: number, savePrice: (id: number) => void,
+const MainContent = ({
+                       mode,
+                       setMode,
+                       price,
+                       savePrice,
+                       quoteOptions,
+                       setQuoteOptions,
+                       selectedQuote,
+                       setSelectedQuote,
+                       isAuthenticated,
+                       signOut
+                     }: {
+  mode: PaletteMode,
+  setMode: Dispatch<SetStateAction<PaletteMode>>,
+  price: number,
+  savePrice: (id: number) => void,
+  quoteOptions: QuoteOption[],
+  setQuoteOptions: (quoteOptions: QuoteOption[]) => void,
+  selectedQuote: QuoteOption,
+  setSelectedQuote: (quoteOption: QuoteOption) => void,
   isAuthenticated: boolean, signOut: () => void
 }) => {
   return (
@@ -64,7 +82,9 @@ const MainContent = ({mode, setMode, price, savePrice, isAuthenticated, signOut}
             {/* Routes */}
             <Routes>
               <Route path="/" element={<Search price={price} savePrice={savePrice}/>}/>
-              <Route path="/quotes" element={<Quotes price={price}/>}/>
+              <Route path="/quotes"
+                     element={<Quotes price={price} quoteOptions={quoteOptions} setQuoteOptions={setQuoteOptions}
+                                      selectedQuote={selectedQuote} setSelectedQuote={setSelectedQuote}/>}/>
               <Route path="*" element={<PageNotFound/>}/>
             </Routes>
           </BrowserRouter>
@@ -84,6 +104,27 @@ const MainContent = ({mode, setMode, price, savePrice, isAuthenticated, signOut}
 function App() {
   const [mode, setMode] = useState<PaletteMode>("light");
   const [price, setPrice] = useState(0);
+  const [quoteOptions, setQuoteOptions] = useState([
+    {
+      id: 1,
+      downPayment: 3000,
+      term: 60,
+      interestRate: 5.8,
+    },
+    {
+      id: 2,
+      downPayment: 10000,
+      term: 60,
+      interestRate: 5.4,
+    },
+    {
+      id: 3,
+      downPayment: 8000,
+      term: 40,
+      interestRate: 5.5,
+    },
+  ]);
+  const [selectedQuote, setSelectedQuote] = useState(quoteOptions[0]);
   const {instance} = useMsal();
   const isAuthenticated = useIsAuthenticated();
 
@@ -117,8 +158,9 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline/>
-      <MainContent mode={mode} setMode={setMode} price={price} savePrice={savePrice} isAuthenticated={isAuthenticated}
-                   signOut={signOut}/>
+      <MainContent mode={mode} setMode={setMode} price={price} savePrice={savePrice} quoteOptions={quoteOptions}
+                   setQuoteOptions={setQuoteOptions} selectedQuote={selectedQuote} setSelectedQuote={setSelectedQuote}
+                   isAuthenticated={isAuthenticated} signOut={signOut}/>
       {
         !isAuthenticated ?
           <Button variant="outlined" onClick={signIn}>
