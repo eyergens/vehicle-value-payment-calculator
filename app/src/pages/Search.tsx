@@ -1,5 +1,5 @@
 import {Autocomplete, Box, Button, IconButton, Paper, TextField, Typography} from '@mui/material'
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import {useQuery} from "@tanstack/react-query";
 import SearchIcon from '@mui/icons-material/Search';

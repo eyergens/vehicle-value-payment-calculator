@@ -6,7 +6,9 @@ import axios from "axios";
 import {useQuery} from "@tanstack/react-query";
 import type {PaymentsSearchResult} from "../types/PaymentsSearchResult.ts";
 import type {QuoteForm} from "../types/QuoteForm.ts";
-import type {QuoteOption} from "../types/QuoteOption.ts";
+import {useAppDispatch, useAppSelector} from "../hooks.ts";
+import {add, selectQuotes} from "../features/quotes/quotesSlice.ts";
+import {select, selectSelectedQuote, selectSelectedQuoteId} from "../features/quotes/selectedQuoteSlice.ts";
 
 const fetchMonthlyPaymentsResults = async (price: number, downPayment: number, loanTerm: number, interestRate: number): Promise<PaymentsSearchResult> => {
   return axios.get<PaymentsSearchResult>("/api/payments", {
@@ -18,13 +20,13 @@ const fetchMonthlyPaymentsResults = async (price: number, downPayment: number, l
   });
 };
 
-export default function Quotes({price, quoteOptions, setQuoteOptions, selectedQuote, setSelectedQuote}: {
+export default function Quotes({price}: {
   price: number;
-  quoteOptions: QuoteOption[];
-  setQuoteOptions: (quoteOptions: QuoteOption[]) => void;
-  selectedQuote: QuoteOption;
-  setSelectedQuote: (quoteOption: QuoteOption) => void;
 }) {
+  const quoteOptions = useAppSelector(selectQuotes);
+  const selectedQuoteId = useAppSelector(selectSelectedQuoteId);
+  const selectedQuote = useAppSelector(selectSelectedQuote);
+  const dispatch = useAppDispatch()
 
   const addQuoteOption: QuoteForm['addQuoteOption'] = (values) => {
     const newOption = {
@@ -33,28 +35,21 @@ export default function Quotes({price, quoteOptions, setQuoteOptions, selectedQu
       term: values.term,
       interestRate: values.interestRate,
     };
-    setQuoteOptions([...quoteOptions, newOption]);
-    setSelectedQuote(newOption);
+    dispatch(add(newOption));
+    dispatch(select(newOption.id));
   };
 
   useEffect(() => {
-    if (!quoteOptions.some(option => option.id == selectedQuote.id)) {
-      setSelectedQuote(quoteOptions[0])
+    if (!quoteOptions.some(option => option.id == selectedQuoteId)) {
+      dispatch(select(quoteOptions[0]?.id || 0));
     }
   }, [quoteOptions]);
 
-  const removeQuoteOption = (id: number) => {
-    setQuoteOptions(quoteOptions.filter(option => option.id !== id));
-  };
-
-  const setSelectedQuoteOption = (id: number) => {
-    setSelectedQuote(quoteOptions.find(option => option.id == id) ?? quoteOptions[0]);
-  };
-
   const paymentsQuery = useQuery({
     queryKey: ['search', selectedQuote],
-    queryFn: () => fetchMonthlyPaymentsResults(price, selectedQuote.downPayment,
-      selectedQuote.term, selectedQuote.interestRate),
+    queryFn: () => fetchMonthlyPaymentsResults(price, selectedQuote?.downPayment || 0,
+      selectedQuote?.term || 0, selectedQuote?.interestRate || 0),
+    enabled: price !== 0,
     retry: false
   })
 
@@ -70,8 +65,7 @@ export default function Quotes({price, quoteOptions, setQuoteOptions, selectedQu
       }} p={2}>
         {
           quoteOptions.map((quote) => (
-            <Option key={quote.id} option={quote} removeQuoteOption={removeQuoteOption} selectedId={selectedQuote.id}
-                    setSelected={setSelectedQuoteOption}/>
+            <Option key={quote.id} option={quote}/>
           ))
         }
       </Box>
