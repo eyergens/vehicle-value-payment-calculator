@@ -11,9 +11,13 @@ import {
 } from '@mui/material'
 import {useState} from 'react'
 import AddIcon from "@mui/icons-material/Add"
-import type {QuoteForm} from "../types/QuoteForm.ts";
+import {add, selectQuotes} from "../features/quotes/quotesSlice.ts";
+import {select} from "../features/quotes/selectedQuoteSlice.ts";
+import {useAppDispatch, useAppSelector} from "../hooks.ts";
+import type {QuoteOption} from "../types/QuoteOption.ts";
+import {selectValue} from "../features/price/priceSlice.ts";
 
-export default function Form({addQuoteOption}: QuoteForm) {
+export default function Form() {
   const [newQuote, setNewQuotes] = useState({
     downPayment: null,
     term: null,
@@ -23,6 +27,27 @@ export default function Form({addQuoteOption}: QuoteForm) {
   const [termError, setTermError] = useState(false);
   const [interestRateError, setInterestRateError] = useState(false);
 
+  const quoteOptions = useAppSelector(selectQuotes);
+  const price = useAppSelector(selectValue).price;
+  const dispatch = useAppDispatch();
+
+  const limits = {
+    downPayment: { min: 0, max: price != 0 ? price : 1000000 },
+    term: { min: 1, max: 72 },
+    interestRate: { min: 0, max: 100 }
+  };
+
+  const addQuoteOption = (values: QuoteOption ) => {
+    const newOption = {
+      id: values.id,
+      downPayment: values.downPayment,
+      term: values.term,
+      interestRate: values.interestRate,
+    };
+    dispatch(add(newOption));
+    dispatch(select(newOption.id));
+  };
+
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setNewQuotes((prevValues) => ({
       ...prevValues,
@@ -30,22 +55,23 @@ export default function Form({addQuoteOption}: QuoteForm) {
     }));
   };
 
-  const isInvalid = (value: number | null): boolean => {
-    return value == null || value <= 0
+  const isInvalid = (value: number | null, min: number, max: number): boolean => {
+    return value == null || value < min || value > max;
   }
 
   const handleSubmit: React.FormEventHandler = (e) => {
     e.preventDefault();
-    const downPaymentInvalid = isInvalid(newQuote.downPayment);
-    const termInvalid = isInvalid(newQuote.term);
-    const interestRateInvalid = isInvalid(newQuote.interestRate);
+    const downPaymentInvalid = isInvalid(newQuote.downPayment, limits.downPayment.min, limits.downPayment.max);
+    const termInvalid = isInvalid(newQuote.term, limits.term.min, limits.term.max);
+    const interestRateInvalid = isInvalid(newQuote.interestRate, limits.interestRate.min, limits.interestRate.max);
 
     setDownPaymentError(downPaymentInvalid);
     setTermError(termInvalid);
     setInterestRateError(interestRateInvalid);
 
     if (!downPaymentInvalid && !termInvalid && !interestRateInvalid) {
-      addQuoteOption?.({
+      addQuoteOption({
+        id: (quoteOptions.at(-1)?.id ?? 1) + 1,
         downPayment: newQuote.downPayment!,
         term: newQuote.term!,
         interestRate: newQuote.interestRate!
@@ -78,7 +104,8 @@ export default function Form({addQuoteOption}: QuoteForm) {
               onChange={handleChange}
               startAdornment={<InputAdornment position="start">$</InputAdornment>}
               inputProps={{
-                min: 0
+                min: limits.downPayment.min,
+                max: limits.downPayment.max
               }}
             />
             {downPaymentError && <FormHelperText id="component-error-text">Invalid Down Payment</FormHelperText>}
@@ -93,7 +120,8 @@ export default function Form({addQuoteOption}: QuoteForm) {
               value={newQuote.term || ''}
               onChange={handleChange}
               inputProps={{
-                min: 0
+                min: limits.term.min,
+                max: limits.term.max
               }}
             />
             {termError && <FormHelperText id="component-error-text">Invalid Loan Term</FormHelperText>}
@@ -110,7 +138,8 @@ export default function Form({addQuoteOption}: QuoteForm) {
               endAdornment={<InputAdornment position="start">%</InputAdornment>}
               inputProps={{
                 step: "0.01",
-                min: 0
+                min: limits.interestRate.min,
+                max: limits.interestRate.max
               }}
             />
             {interestRateError && <FormHelperText id="component-error-text">Invalid Interest Rate</FormHelperText>}

@@ -1,11 +1,13 @@
 import {configureStore} from '@reduxjs/toolkit'
 import {quotesSlice} from './features/quotes/quotesSlice.ts'
 import {selectedQuoteSlice} from './features/quotes/selectedQuoteSlice.ts'
+import {valueSlice} from "./features/price/priceSlice.ts";
 
 export const store = configureStore({
   reducer: {
     quotes: quotesSlice.reducer,
-    selectedQuote: selectedQuoteSlice.reducer
+    selectedQuote: selectedQuoteSlice.reducer,
+    value: valueSlice.reducer
   }
 });
 

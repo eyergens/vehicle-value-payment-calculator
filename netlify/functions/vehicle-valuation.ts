@@ -7,7 +7,7 @@ export const handler: Handler = async (event) => {
     if (!make || !model || !year) {
       return {
         statusCode: 400,
-        body: JSON.stringify({error: "Bad Request", message: "Missing parameters"})
+        body: JSON.stringify({error: "Missing parameters"})
       };
     }
 
@@ -34,7 +34,7 @@ export const handler: Handler = async (event) => {
   } catch (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({error: "Internal server error", message: "Internal server error"})
+      body: JSON.stringify({error: "Internal server error"})
     };
   }
 };

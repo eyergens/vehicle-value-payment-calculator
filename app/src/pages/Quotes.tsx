@@ -5,10 +5,10 @@ import {useEffect} from 'react'
 import axios from "axios";
 import {useQuery} from "@tanstack/react-query";
 import type {PaymentsSearchResult} from "../types/PaymentsSearchResult.ts";
-import type {QuoteForm} from "../types/QuoteForm.ts";
 import {useAppDispatch, useAppSelector} from "../hooks.ts";
-import {add, selectQuotes} from "../features/quotes/quotesSlice.ts";
+import {selectQuotes} from "../features/quotes/quotesSlice.ts";
 import {select, selectSelectedQuote, selectSelectedQuoteId} from "../features/quotes/selectedQuoteSlice.ts";
+import {selectValue} from "../features/price/priceSlice.ts";
 
 const fetchMonthlyPaymentsResults = async (price: number, downPayment: number, loanTerm: number, interestRate: number): Promise<PaymentsSearchResult> => {
   return axios.get<PaymentsSearchResult>("/api/payments", {
@@ -20,24 +20,12 @@ const fetchMonthlyPaymentsResults = async (price: number, downPayment: number, l
   });
 };
 
-export default function Quotes({price}: {
-  price: number;
-}) {
+export default function Quotes() {
   const quoteOptions = useAppSelector(selectQuotes);
   const selectedQuoteId = useAppSelector(selectSelectedQuoteId);
   const selectedQuote = useAppSelector(selectSelectedQuote);
+  const price = useAppSelector(selectValue).price;
   const dispatch = useAppDispatch()
-
-  const addQuoteOption: QuoteForm['addQuoteOption'] = (values) => {
-    const newOption = {
-      id: (quoteOptions.at(-1)?.id ?? 1) + 1,
-      downPayment: values.downPayment,
-      term: values.term,
-      interestRate: values.interestRate,
-    };
-    dispatch(add(newOption));
-    dispatch(select(newOption.id));
-  };
 
   useEffect(() => {
     if (!quoteOptions.some(option => option.id == selectedQuoteId)) {
@@ -70,13 +58,13 @@ export default function Quotes({price}: {
         }
       </Box>
 
-      <Form addQuoteOption={addQuoteOption}/>
+      <Form/>
 
       {paymentsQuery.isLoading && <p>Loading...</p>}
       {
         paymentsQuery.data?.error &&
         <>
-          <Typography variant={"h5"}>{paymentsQuery.data?.message}</Typography>
+          <Typography variant={"h5"}>{paymentsQuery.data?.error}</Typography>
         </>
       }
       {
