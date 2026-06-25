@@ -14,11 +14,10 @@ import AddIcon from "@mui/icons-material/Add"
 import {add, selectQuotes} from "../features/quotes/quotesSlice.ts";
 import {select} from "../features/quotes/selectedQuoteSlice.ts";
 import {useAppDispatch, useAppSelector} from "../hooks.ts";
-import type {QuoteOption} from "../types/QuoteOption.ts";
 import {selectValue} from "../features/price/priceSlice.ts";
 
 export default function Form() {
-  const [newQuote, setNewQuotes] = useState({
+  const [newQuote, setNewQuote] = useState({
     downPayment: null,
     term: null,
     interestRate: null
@@ -37,19 +36,8 @@ export default function Form() {
     interestRate: {min: 0, max: 100}
   };
 
-  const addQuoteOption = (values: QuoteOption) => {
-    const newOption = {
-      id: values.id,
-      downPayment: values.downPayment,
-      term: values.term,
-      interestRate: values.interestRate,
-    };
-    dispatch(add(newOption));
-    dispatch(select(newOption.id));
-  };
-
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    setNewQuotes((prevValues) => ({
+    setNewQuote((prevValues) => ({
       ...prevValues,
       [e.target.name]: e.target.value,
     }));
@@ -70,14 +58,16 @@ export default function Form() {
     setInterestRateError(interestRateInvalid);
 
     if (!downPaymentInvalid && !termInvalid && !interestRateInvalid) {
-      addQuoteOption({
+      const newOption = {
         id: (quoteOptions.at(-1)?.id ?? 1) + 1,
         downPayment: newQuote.downPayment!,
         term: newQuote.term!,
         interestRate: newQuote.interestRate!
-      });
+      };
+      dispatch(add(newOption));
+      dispatch(select(newOption.id));
 
-      setNewQuotes({
+      setNewQuote({
         downPayment: null,
         term: null,
         interestRate: null

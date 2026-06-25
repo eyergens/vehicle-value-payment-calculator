@@ -11,14 +11,6 @@ export default function Option({option}: {
   const selected = useAppSelector(selectSelectedQuoteId) === option.id;
   const dispatch = useAppDispatch()
 
-  const removeQuoteOption = (id: number) => {
-    dispatch(remove(id));
-  };
-
-  const setSelected = (id: number) => {
-    dispatch(select(id));
-  };
-
   return (
     <Paper
       sx={{
@@ -31,13 +23,13 @@ export default function Option({option}: {
       }}
       key={option.id}
       elevation={selected ? 8 : 1}
-      onClick={() => setSelected(option.id)}
+      onClick={() => dispatch(select(option.id))}
     >
       <Box display="flex" flexDirection="row" alignItems="center">
         <Typography variant="h5">Quote Option {option.id}</Typography>
         <IconButton onClick={(e) => {
           e.stopPropagation();
-          removeQuoteOption(option.id);
+          dispatch(remove(option.id));
         }}>
           <DeleteIcon></DeleteIcon>
         </IconButton>
