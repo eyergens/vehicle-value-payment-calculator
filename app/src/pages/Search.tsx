@@ -75,19 +75,19 @@ export default function Search() {
     setFilters({make: make?.value ?? '', model: model, year: year.year()});
   };
 
-
   const hasQueryValue = valueQuery.isSuccess && !valueQuery.data?.error;
 
-  const current = hasQueryValue
-    ? {
-      make: make?.value,
-      model,
-      year: year.year(),
-      price: valueQuery.data?.valuationPrice,
+  let current = null;
+  if (hasQueryValue) {
+    current = {
+      make: filters.make,
+      model: filters.model,
+      year: filters.year,
+      price: valueQuery.data?.valuationPrice
     }
-    : value.price !== 0
-      ? value
-      : null;
+  } else if (value.price !== 0) {
+    current = value
+  }
 
   const isFavorited =
     current &&
