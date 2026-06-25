@@ -64,8 +64,7 @@ function App() {
           {/* Routes */}
           <Routes>
             <Route path="/" element={<Search/>}/>
-            <Route path="/quotes"
-                   element={<Quotes/>}/>
+            <Route path="/quotes" element={<Quotes/>}/>
             <Route path="*" element={<PageNotFound/>}/>
           </Routes>
         </BrowserRouter>

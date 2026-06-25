@@ -32,12 +32,12 @@ export default function Form() {
   const dispatch = useAppDispatch();
 
   const limits = {
-    downPayment: { min: 0, max: price != 0 ? price : 1000000 },
-    term: { min: 1, max: 72 },
-    interestRate: { min: 0, max: 100 }
+    downPayment: {min: 0, max: price != 0 ? price : 1000000},
+    term: {min: 1, max: 600},
+    interestRate: {min: 0, max: 100}
   };
 
-  const addQuoteOption = (values: QuoteOption ) => {
+  const addQuoteOption = (values: QuoteOption) => {
     const newOption = {
       id: values.id,
       downPayment: values.downPayment,
