@@ -12,6 +12,8 @@ Deployed on Netlify:
 * Vite (fast dev & optimized build)
 * Netlify (deployment & hosting)
 * Material UI
+* Redux
+* Jest
 
 ## Getting Started
 ### Prerequisites
