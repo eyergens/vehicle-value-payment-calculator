@@ -13,7 +13,7 @@ Deployed on Netlify:
 * Netlify (deployment & hosting)
 * Material UI
 * Redux
-* Jest
+* Vitest
 
 ## Getting Started
 ### Prerequisites

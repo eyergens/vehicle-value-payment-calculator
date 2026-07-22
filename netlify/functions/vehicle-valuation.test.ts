@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { handler } from "./vehicle-valuation";
+import {describe, it, expect, vi, beforeEach, afterEach} from "vitest";
+import {handler} from "./vehicle-valuation";
 import {HandlerContext, HandlerEvent} from "@netlify/functions";
 
 const mockFetch = vi.fn();
@@ -34,7 +34,7 @@ describe("Vehicle Valuation handler", () => {
   });
 
   it("returns API result when params are valid", async () => {
-    const fakeApiResponse = { value: 12345 };
+    const fakeApiResponse = {value: 12345};
 
     mockFetch.mockResolvedValue({
       status: 200,
@@ -69,7 +69,7 @@ describe("Vehicle Valuation handler", () => {
   it("handles upstream API error status", async () => {
     mockFetch.mockResolvedValue({
       status: 500,
-      json: vi.fn().mockResolvedValue({ error: "API failed" }),
+      json: vi.fn().mockResolvedValue({error: "API failed"}),
     });
 
     const event = {
@@ -89,7 +89,7 @@ describe("Vehicle Valuation handler", () => {
     if (!res) throw new Error("Handler returned void");
 
     expect(res.statusCode).toBe(500);
-    expect(JSON.parse(res.body)).toEqual({ error: "API failed" });
+    expect(JSON.parse(res.body)).toEqual({error: "API failed"});
   });
 
   it("returns 500 on exception", async () => {

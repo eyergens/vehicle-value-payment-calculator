@@ -19,6 +19,12 @@ export default defineConfig({
       provider: 'v8'
     },
     environment: 'jsdom',
-    setupFiles: ['./vitest.setup.ts']
+    setupFiles: ['./vitest.setup.ts'],
+    globals: true,
+    exclude: [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/.netlify/**",
+    ]
   }
 });

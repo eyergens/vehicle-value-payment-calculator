@@ -86,6 +86,7 @@ export default function Form() {
               required
               label="Down Payment"
               type="number"
+              id="downPayment"
               name="downPayment"
               value={newQuote.downPayment || ''}
               onChange={handleChange}
@@ -103,6 +104,7 @@ export default function Form() {
               required
               label="Term (months)"
               type="number"
+              id="term"
               name="term"
               value={newQuote.term || ''}
               onChange={handleChange}
@@ -119,6 +121,7 @@ export default function Form() {
               required
               label="Interest Rate"
               type="number"
+              id="interestRate"
               name="interestRate"
               value={newQuote.interestRate || ''}
               onChange={handleChange}
