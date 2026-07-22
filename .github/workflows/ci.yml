@@ -58,7 +58,7 @@ jobs:
 
       # Run unit and integration tests with coverage
       - name: Run tests
-        run: npm run test -- --coverage --watchAll=false
+        run: npm run test -- --coverage
 
       # Upload coverage reports for analysis
       - name: Upload coverage
