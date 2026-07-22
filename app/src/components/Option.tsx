@@ -1,14 +1,16 @@
 import {Box, IconButton, Paper, Typography} from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete';
 import type {QuoteOption} from "../types/QuoteOption.ts";
+import {remove} from "../features/quotes/quotesSlice.ts";
+import {useAppDispatch, useAppSelector} from "../hooks.ts";
+import {select, selectSelectedQuoteId} from "../features/quotes/selectedQuoteSlice.ts";
 
-export default function Option({option, removeQuoteOption, selectedId, setSelected}: {
-  option: QuoteOption,
-  removeQuoteOption: (id: number) => void,
-  selectedId: number,
-  setSelected: (id: number) => void,
+export default function Option({option}: {
+  option: QuoteOption
 }) {
-  const selected = selectedId === option.id;
+  const selected = useAppSelector(selectSelectedQuoteId) === option.id;
+  const dispatch = useAppDispatch()
+
   return (
     <Paper
       sx={{
@@ -21,13 +23,13 @@ export default function Option({option, removeQuoteOption, selectedId, setSelect
       }}
       key={option.id}
       elevation={selected ? 8 : 1}
-      onClick={() => setSelected(option.id)}
+      onClick={() => dispatch(select(option.id))}
     >
       <Box display="flex" flexDirection="row" alignItems="center">
         <Typography variant="h5">Quote Option {option.id}</Typography>
         <IconButton onClick={(e) => {
           e.stopPropagation();
-          removeQuoteOption(option.id);
+          dispatch(remove(option.id));
         }}>
           <DeleteIcon></DeleteIcon>
         </IconButton>

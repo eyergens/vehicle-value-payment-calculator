@@ -4,17 +4,24 @@ export const handler: Handler = async (event) => {
   try {
     const {price, downPayment, loanTerm, interestRate} = event.queryStringParameters ?? {};
 
-    if (!!price || !!downPayment || !!loanTerm || !!interestRate) {
+    if (!price || !downPayment || !loanTerm || !interestRate) {
       let message: string;
-      if (!!price) {
-        message = "Select a Vehicle Value under the Search tab before continuing";
+      if (!price) {
+        message = `Select a Vehicle Value under the Search tab before continuing ${!!price}`;
       } else {
         message = "Select a Quote Option to continue";
       }
 
       return {
         statusCode: 400,
-        body: JSON.stringify({error: "Bad Request", message: message})
+        body: JSON.stringify({error: message})
+      };
+    }
+
+    if (Number(downPayment) > Number(price)) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({error: "Down Payment must be less than the Vehicle Value"})
       };
     }
 
@@ -41,7 +48,7 @@ export const handler: Handler = async (event) => {
   } catch (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({error: "Internal server error", message: "Internal server error"})
+      body: JSON.stringify({error: "Internal server error"})
     };
   }
 };

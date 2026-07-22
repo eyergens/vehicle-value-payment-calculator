@@ -1,5 +1,5 @@
 import {Autocomplete, Box, Button, IconButton, Paper, TextField, Typography} from '@mui/material'
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import {useQuery} from "@tanstack/react-query";
 import SearchIcon from '@mui/icons-material/Search';
@@ -15,6 +15,8 @@ import type {ModelSearchResult} from "../types/ModelSearchResult.ts";
 import type {Make} from "../types/Make.ts";
 import type {Model} from "../types/Model.ts";
 import type {ValueSearchResult} from "../types/ValueSearchResult.ts";
+import {useAppDispatch, useAppSelector} from "../hooks.ts";
+import {favorite, unfavorite, selectValue} from "../features/price/priceSlice.ts";
 
 const fetchModelSearchResults = async (query: string): Promise<ModelSearchResult> => {
   return axios.get<ModelSearchResult>(`https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformake/${query}?format=json`
@@ -35,15 +37,15 @@ const fetchMarketValueSearchResults = async (make: string, model: string, year: 
   });
 };
 
-export default function Search({price, savePrice}: {
-  price: number;
-  savePrice: (price: number) => void,
-}) {
+export default function Search() {
   const [carMakes, setCarMakes] = useState<Make[]>([]);
   const [make, setMake] = useState<Make | null>(null);
   const [model, setModel] = useState('');
   const [year, setYear] = useState(dayjs());
   const [filters, setFilters] = useState({make: '', model: '', year: dayjs().year()});
+
+  const value = useAppSelector(selectValue);
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     Papa.parse(carMakesCSV, {
@@ -72,6 +74,28 @@ export default function Search({price, savePrice}: {
     e.preventDefault();
     setFilters({make: make?.value ?? '', model: model, year: year.year()});
   };
+
+  const hasQueryValue = valueQuery.isSuccess && !valueQuery.data?.error;
+
+  let current = null;
+  if (hasQueryValue) {
+    current = {
+      make: filters.make,
+      model: filters.model,
+      year: filters.year,
+      price: valueQuery.data?.valuationPrice
+    }
+  } else if (value.price !== 0) {
+    current = value
+  }
+
+  const isFavorited =
+    current &&
+    value.price === current.price &&
+    value.make === current.make &&
+    value.model === current.model &&
+    value.year === current.year;
+
 
   return (
     <>
@@ -155,26 +179,28 @@ export default function Search({price, savePrice}: {
         </Paper>
 
         {valueQuery.isLoading && <p>Loading...</p>}
+        {valueQuery.data?.error && <Typography variant={"h5"}>{valueQuery.data?.error}</Typography>}
         {
-          valueQuery.data?.error &&
-          <>
-            <Typography variant={"h4"}>Error:</Typography>
-            <Typography variant={"h5"}>{valueQuery.data?.message}</Typography>
-          </>
-        }
-        {
-          (valueQuery.isSuccess && !valueQuery.data?.error) &&
-          <>
-            <Typography variant={"h4"}>Estimated Value: ${valueQuery.data?.valuationPrice}</Typography>
-            <IconButton onClick={() => {
-              savePrice(valueQuery.data?.valuationPrice)
-            }}>
-              {
-                price !== valueQuery.data?.valuationPrice ? <FavoriteBorderIcon></FavoriteBorderIcon> :
-                  <FavoriteIcon></FavoriteIcon>
-              }
-            </IconButton>
-          </>
+          current && (
+            <Box display="flex" flexDirection="row" justifyContent="center">
+              <Typography variant="h4">
+                Estimated Value for a {current.year} {current.make} {current.model}: $
+                {current.price}
+              </Typography>
+
+              <IconButton
+                onClick={() => {
+                  if (isFavorited) {
+                    dispatch(unfavorite());
+                  } else {
+                    dispatch(favorite(current));
+                  }
+                }}
+              >
+                {isFavorited ? <FavoriteIcon/> : <FavoriteBorderIcon/>}
+              </IconButton>
+            </Box>
+          )
         }
       </Box>
     </>

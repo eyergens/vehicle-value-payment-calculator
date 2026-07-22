@@ -4,7 +4,7 @@ export const handler: Handler = async (event) => {
   try {
     const {price} = event.queryStringParameters ?? {};
 
-    if (!!price) {
+    if (!price) {
       return {
         statusCode: 400,
         body: JSON.stringify({error: "Bad Request", message: "Missing parameters"})
