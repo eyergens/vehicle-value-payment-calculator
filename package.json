@@ -22,7 +22,8 @@
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "build": "vite build"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
