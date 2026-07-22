@@ -1,5 +1,5 @@
 import {describe, it, expect, vi, beforeEach, afterEach} from "vitest";
-import {handler} from "./vehicle-valuation";
+import {handler} from "../functions/vehicle-valuation";
 import {HandlerContext, HandlerEvent} from "@netlify/functions";
 
 const mockFetch = vi.fn();
