@@ -21,6 +21,7 @@
     "dev": "vite",
     "test": "vitest",
     "test:ci": "vitest run --coverage",
+    "test:ui": "vitest --ui",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build": "vite build"
@@ -36,6 +37,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/user-event": "^14.6.1",
     "@vitest/coverage-v8": "^4.1.9",
+    "@vitest/ui": "^4.1.10",
     "axios": "^1.18.1",
     "dayjs": "^1.11.20",
     "jsdom": "^29.1.1",
