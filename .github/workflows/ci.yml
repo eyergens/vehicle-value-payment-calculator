@@ -66,6 +66,7 @@ jobs:
 
   report-coverage:
     needs: test
+    if: always()
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -80,7 +81,6 @@ jobs:
           path: coverage
 
       - name: Report Coverage
-        if: always()
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           comment-on: pr
