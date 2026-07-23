@@ -58,32 +58,11 @@ jobs:
       - name: Run Tests
         run: npm run test:ci
 
-      - name: Upload Coverage
-        if: always()
-        uses: actions/upload-artifact@v5
-        with:
-          name: coverage
-          path: coverage
-
-  report-coverage:
-    needs: test
-    if: always()
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-    steps:
-      ## Check out the repository to obtain the vitest.config file
-      - uses: actions/checkout@v5
-      - name: Download Coverage
-        uses: actions/download-artifact@v6
-        with:
-          name: coverage
-          path: coverage
-
       - name: Report Coverage
+        if: always()
         uses: davelosert/vitest-coverage-report-action@v2
         with:
+          file-coverage-mode: 'all'
           comment-on: pr
 
   build:
