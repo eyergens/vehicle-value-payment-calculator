@@ -15,6 +15,7 @@ import {add, selectQuotes} from "../features/quotes/quotesSlice.ts";
 import {select} from "../features/quotes/selectedQuoteSlice.ts";
 import {useAppDispatch, useAppSelector} from "../hooks.ts";
 import {selectValue} from "../features/price/priceSlice.ts";
+import {isInvalid} from "../utils/validation.ts";
 
 export default function Form() {
   const [newQuote, setNewQuote] = useState({
@@ -42,10 +43,6 @@ export default function Form() {
       [e.target.name]: e.target.value,
     }));
   };
-
-  const isInvalid = (value: number | null, min: number, max: number): boolean => {
-    return value == null || value < min || value > max;
-  }
 
   const handleSubmit: React.FormEventHandler = (e) => {
     e.preventDefault();
@@ -89,6 +86,7 @@ export default function Form() {
               required
               label="Down Payment"
               type="number"
+              id="downPayment"
               name="downPayment"
               value={newQuote.downPayment || ''}
               onChange={handleChange}
@@ -106,6 +104,7 @@ export default function Form() {
               required
               label="Term (months)"
               type="number"
+              id="term"
               name="term"
               value={newQuote.term || ''}
               onChange={handleChange}
@@ -122,6 +121,7 @@ export default function Form() {
               required
               label="Interest Rate"
               type="number"
+              id="interestRate"
               name="interestRate"
               value={newQuote.interestRate || ''}
               onChange={handleChange}
@@ -144,7 +144,7 @@ export default function Form() {
           type="submit"
           variant="outlined"
           startIcon={<AddIcon/>}
-          onClick={handleSubmit}
+          onSubmit={handleSubmit}
         >
           Add Quote
         </Button>

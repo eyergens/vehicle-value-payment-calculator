@@ -7,7 +7,7 @@ export const handler: Handler = async (event) => {
     if (!price || !downPayment || !loanTerm || !interestRate) {
       let message: string;
       if (!price) {
-        message = `Select a Vehicle Value under the Search tab before continuing ${!!price}`;
+        message = "Select a Vehicle Value under the Search tab before continuing";
       } else {
         message = "Select a Quote Option to continue";
       }
@@ -45,7 +45,7 @@ export const handler: Handler = async (event) => {
         "Cache-Control": "public, max-age=3600"
       }
     };
-  } catch (error) {
+  } catch {
     return {
       statusCode: 500,
       body: JSON.stringify({error: "Internal server error"})

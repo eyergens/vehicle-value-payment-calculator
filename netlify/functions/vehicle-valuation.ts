@@ -1,6 +1,6 @@
-import type {Handler} from "@netlify/functions";
+import type {Handler, HandlerResponse} from "@netlify/functions";
 
-export const handler: Handler = async (event) => {
+export const handler: Handler = async (event): Promise<HandlerResponse> => {
   try {
     const {make, model, year} = event.queryStringParameters ?? {};
 
@@ -31,7 +31,7 @@ export const handler: Handler = async (event) => {
         "Cache-Control": "public, max-age=3600"
       }
     };
-  } catch (error) {
+  } catch {
     return {
       statusCode: 500,
       body: JSON.stringify({error: "Internal server error"})

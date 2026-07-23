@@ -31,7 +31,7 @@ export default function Quotes() {
     if (!quoteOptions.some(option => option.id == selectedQuoteId)) {
       dispatch(select(quoteOptions[0]?.id || 0));
     }
-  }, [quoteOptions]);
+  }, [quoteOptions, selectedQuoteId, dispatch]);
 
   const paymentsQuery = useQuery({
     queryKey: ['search', selectedQuote],

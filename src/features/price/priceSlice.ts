@@ -14,7 +14,7 @@ export const valueSlice = createSlice({
   initialState,
   reducers: {
     favorite: (_state, action) => action.payload,
-    unfavorite: (_state) => initialState
+    unfavorite: () => initialState
   }
 })
 
