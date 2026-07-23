@@ -37,34 +37,18 @@ jobs:
         run: npx tsc --noEmit
 
   test:
+    name: Run Tests
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - branch: main
-            artifact: main
-          - branch: ${{ github.head_ref }}
-            artifact: pull-request
-
-    permissions:
-      # Required to check out the code
-      contents: read
-
     steps:
-      - uses: actions/checkout@v5
-        with:
-          ref: ${{ matrix.branch }}
-          ## Set repository to correctly checkout from forks
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
+      - name: Checkout code
+        uses: actions/checkout@v6
 
-      # Set up Node.js environment
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
 
-      # Install dependencies using clean install
       - name: Install dependencies
         run: npm ci
 
@@ -74,7 +58,7 @@ jobs:
       - name: Upload Coverage
         uses: actions/upload-artifact@v5
         with:
-          name: coverage-${{ matrix.artifact }}
+          name: coverage
           path: coverage
 
   report-coverage:
@@ -83,20 +67,16 @@ jobs:
     steps:
       ## Check out the repository to obtain the vitest.config file
       - uses: actions/checkout@v5
-      - name: Download Coverage Artifacts
+      - name: Download Coverage
         uses: actions/download-artifact@v6
         with:
-          name: coverage-pull-request
+          name: coverage
           path: coverage
-      - uses: actions/download-artifact@v6
-        with:
-          name: coverage-main
-          path: coverage-main
 
       - name: Report Coverage
         uses: davelosert/vitest-coverage-report-action@v2
-        with:
-          json-summary-compare-path: coverage-main/coverage-summary.json
+#        with:
+#          json-summary-compare-path: coverage-main/coverage-summary.json
 
   build:
     name: Build Application
