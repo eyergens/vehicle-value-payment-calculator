@@ -27,19 +27,24 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       thresholds: {
-        lines: 80,
-        functions: 80,
-        branches: 80,
-        statements: 80,
+        lines: 85,
+        functions: 85,
+        branches: 85,
+        statements: 85,
       },
     },
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],
     globals: true,
+    reporter: ["text", "json", "json-summary", "html"],
+    reportOnFailure: true,
+    include: ['src/**'],
     exclude: [
       "**/node_modules/**",
       "**/dist/**",
       "**/.netlify/**",
+      '**/types/**',
+      '**/constants/**',
     ]
   }
 });
